@@ -1,17 +1,21 @@
-# Flappy Bird OpenGL 3.3 con LWJGL
+# Flappy Bird OpenGL 3.3 - Primer Parcial
 
-Proyecto Java Maven hecho con **LWJGL + GLFW + OpenGL 3.3 core profile**.
-El juego base tipo Flappy Bird fue refactorizado para que quede ordenado, entendible y facil de defender en un parcial de Programacion Grafica.
+## Estudiante
 
-## Objetivo del proyecto
+- Tatiana
 
-Esta version busca cumplir tres cosas al mismo tiempo:
+## Resumen
 
-- que el juego siga funcionando de forma estable
-- que el codigo sea facil de explicar clase por clase
-- que sea simple de modificar en vivo durante una defensa oral
+Este proyecto corresponde a la entrega del primer parcial de Programacion Grafica.  
+Se desarrolló sobre una base inicial tipo Flappy Bird en Java con LWJGL y OpenGL 3.3 Core Profile, reorganizando el codigo en varias clases y agregando mejoras de jugabilidad, interfaz y sonido.
 
-## Tecnologias usadas
+El objetivo principal de esta version es que el proyecto:
+
+- compile y ejecute de forma estable
+- cumpla los requerimientos del enunciado
+- sea facil de explicar y modificar durante la defensa oral
+
+## Tecnologias utilizadas
 
 - Java 17
 - Maven
@@ -25,30 +29,28 @@ Esta version busca cumplir tres cosas al mismo tiempo:
 - Java 17 o superior
 - Maven instalado
 
-El `pom.xml` esta preparado con `natives-windows` y no usa `-XstartOnFirstThread`.
+El proyecto usa `natives-windows` en el `pom.xml` y no requiere `-XstartOnFirstThread`.
 
-## Compilar
+## Compilacion
 
 ```bash
 mvn clean compile
 ```
 
-## Ejecutar
+## Ejecucion
 
 ```bash
 mvn exec:exec "-DmainClass=com.graphics.AppFlappyBird"
 ```
 
-Tambien puedes correrlo en dos pasos:
+En Windows tambien puedes usar los lanzadores incluidos:
 
-```bash
-mvn clean compile
-mvn exec:exec "-DmainClass=com.graphics.AppFlappyBird"
-```
+- `run-flappy.bat`
+- `run-flappy.ps1`
 
 ## Controles
 
-### Durante el juego
+### Juego
 
 - `ESPACIO`: salto del Jugador 1
 - `W` o `FLECHA ARRIBA`: salto del Jugador 2
@@ -56,39 +58,71 @@ mvn exec:exec "-DmainClass=com.graphics.AppFlappyBird"
 
 ### Menus
 
-- `ENTER`: abrir inicio, reiniciar o confirmar flujo principal
+- `ENTER`: abrir inicio o reiniciar
 - `1`: elegir modo de 1 jugador
 - `2`: elegir modo de 2 jugadores
-- Click del mouse:
+- Click izquierdo:
   - `START`: abrir seleccion de jugadores
-  - boton izquierdo de `GAME OVER`: reiniciar
-  - boton derecho de `GAME OVER`: volver a elegir modo
+  - boton izquierdo en `GAME OVER`: reiniciar
+  - boton derecho en `GAME OVER`: volver a elegir modo
 
-## Caracteristicas implementadas
+## Requerimientos del enunciado y como se cumplen
 
-- Pajaro compuesto por figuras geometricas:
-  - cuerpo
-  - vientre
-  - ala
-  - pico
-  - cola
-  - ojo y pupila
-- Dos jugadores simultaneos en la misma ventana
-- Puntaje independiente para cada jugador
-- Tuberias compartidas
-- Game over solo cuando ambos jugadores mueren
-- Dificultad progresiva segun el mejor puntaje de la partida
-- Fondo con cielo, nubes, montanas, arbustos y suelo
-- Pantalla de inicio
-- Selector de 1 o 2 jugadores
-- Pantalla de game over
-- Sonidos por estado y accion:
-  - menu
-  - partida
-  - salto
-  - punto
-  - golpe
-  - game over
+### 1. Pajaro compuesto por figuras geometricas
+
+El pajaro ya no es un rectangulo unico. Se dibuja con varias primitivas OpenGL:
+
+- cuerpo principal
+- vientre
+- ala
+- pico
+- cola
+- ojo y pupila
+
+Ademas:
+
+- el ala tiene una animacion simple
+- el pajaro se inclina segun su velocidad vertical
+- todas las piezas se calculan alrededor del centro para mantener una composicion coherente
+
+### 2. Modo de dos jugadores simultaneos
+
+El juego soporta dos jugadores en la misma ventana:
+
+- Jugador 1: `ESPACIO`
+- Jugador 2: `W` o `FLECHA ARRIBA`
+
+Cada jugador tiene:
+
+- su propio pajaro
+- su propia posicion
+- su propia velocidad vertical
+- su propio estado vivo o muerto
+- su propio puntaje
+- su propio color
+
+Las tuberias son compartidas y la partida termina solo cuando ambos jugadores mueren.
+
+### 3. Incremento progresivo de dificultad
+
+La dificultad aumenta segun el mejor puntaje de la partida:
+
+- aumenta la velocidad de las tuberias
+- disminuye el tiempo entre apariciones
+- existe un limite maximo y minimo para mantener la jugabilidad
+
+La velocidad actual se muestra en el HUD superior.
+
+### 4. Mejora de la interfaz del juego
+
+Se mejoró la presentacion con:
+
+- cielo, sol, nubes, montañas, arbustos y suelo
+- pantalla de inicio
+- pantalla de seleccion de jugadores
+- pantalla de game over
+- HUD superior con puntajes y velocidad
+- sonido para menu, partida, salto, punto, golpe y game over
 
 ## Estructura del proyecto
 
@@ -123,231 +157,102 @@ src/main/java/com/graphics/utils/
   Vec2.java
 ```
 
-## Explicacion breve de cada clase
+## Explicacion breve de las clases principales
 
-### `AppFlappyBird`
+- `AppFlappyBird`: contiene solo el `main` y arranca el juego.
+- `Game`: controla el ciclo principal, el estado del juego, el input, la actualizacion, el render y la limpieza.
+- `Window`: crea la ventana GLFW, inicializa OpenGL y actualiza el titulo.
+- `InputManager`: centraliza teclado y mouse.
+- `MusicPlayer`: genera sonidos simples en memoria para no depender de archivos de audio externos.
+- `Bird`: representa a cada jugador, con fisica, puntaje y render compuesto.
+- `Pipe`: representa cada tuberia compartida.
+- `PipeSpawner`: genera tuberias usando un temporizador.
+- `DifficultySystem`: calcula velocidad e intervalo segun el puntaje.
+- `CollisionSystem`: detecta choques con suelo, techo y tuberias.
+- `Renderer`: define el orden de dibujo general.
+- `ShapeRenderer`: dibuja rectangulos, triangulos, circulos y lineas con OpenGL.
+- `BackgroundRenderer`: dibuja el escenario del fondo.
+- `HudRenderer`: dibuja la interfaz, menus y pantalla final.
 
-Contiene solo el `main`. Su trabajo es crear `Game` y ejecutar `run()`.
+## Funcionamiento general del juego
 
-### `Game`
+### Bucle principal
 
-Es la clase principal del juego. Maneja:
+En cada frame el juego realiza este orden:
 
-- inicializacion
-- bucle principal
-- lectura de input
-- actualizacion de fisica
-- puntajes
-- colisiones
-- cambio de estados
-- render
-- limpieza final
-
-Estados usados:
-
-- `START`
-- `PLAYER_SELECT`
-- `PLAYING`
-- `GAME_OVER`
-
-### `Window`
-
-Encapsula GLFW y OpenGL:
-
-- crea la ventana
-- crea el contexto OpenGL
-- activa blending
-- procesa eventos
-- cambia el titulo
-- convierte la posicion del mouse a coordenadas del juego
-
-### `InputManager`
-
-Centraliza entrada de teclado y mouse.
-Se encarga especialmente de detectar pulsaciones simples para que una tecla no ejecute muchas veces la misma accion en un solo toque.
-
-### `MusicPlayer`
-
-Genera sonidos en memoria sin depender de archivos de audio externos.
-Tiene sonidos para:
-
-- menu
-- juego
-- salto
-- punto
-- golpe
-- game over
-
-### `Bird`
-
-Representa a un jugador.
-Cada pajaro tiene:
-
-- posicion
-- velocidad vertical
-- estado vivo o muerto
-- color propio
-- puntaje propio
-- tecla de salto propia
-
-La fisica usa:
-
-- gravedad
-- impulso de salto
-- limite de velocidad de caida
-
-### `Pipe`
-
-Representa una tuberia compartida entre jugadores.
-Se mueve hacia la izquierda y verifica:
-
-- si ya salio de pantalla
-- si colisiona con un pajaro
-- si cada jugador ya la puntuo
-
-### `PipeSpawner`
-
-Genera nuevas tuberias con un temporizador.
-La posicion vertical del hueco se elige aleatoriamente dentro de un rango controlado.
-
-### `DifficultySystem`
-
-Calcula la dificultad segun el mayor puntaje entre los jugadores.
-Aumenta:
-
-- velocidad de tuberias
-
-Reduce:
-
-- intervalo de aparicion
-
-Todo con limites maximos y minimos para que siga siendo jugable.
-
-### `CollisionSystem`
-
-Revisa colisiones:
-
-- techo
-- suelo
-- tuberias
-
-Si un pajaro choca, solo ese jugador muere.
-
-### `Renderer`
-
-Coordina el orden de dibujo:
-
-1. fondo
-2. tuberias
-3. pajaros
-4. HUD o pantallas especiales
-
-### `ShapeRenderer`
-
-Es el renderer geometrico base.
-Permite dibujar:
-
-- rectangulos
-- triangulos
-- circulos
-- lineas
-
-Usa un shader basico, un VAO y un VBO para reutilizar la misma estructura OpenGL.
-
-### `BackgroundRenderer`
-
-Dibuja el escenario del juego:
-
-- cielo
-- sol
-- nubes
-- montanas
-- arbustos
-- suelo
-
-### `HudRenderer`
-
-Dibuja la interfaz:
-
-- HUD superior
-- puntajes
-- velocidad
-- pantalla de inicio
-- seleccion de jugadores
-- pantalla de game over
-
-## Como funciona el juego
-
-### 1. Bucle principal
-
-Cada frame hace este orden:
-
-1. leer eventos de GLFW
+1. leer eventos de la ventana
 2. procesar input
-3. actualizar logica del juego
-4. renderizar
+3. actualizar la logica
+4. renderizar la escena
 5. intercambiar buffers
 
-### 2. Fisica del pajaro
+### Fisica del pajaro
 
-La fisica es simple:
+La fisica se basa en:
 
-1. al saltar se asigna una velocidad vertical positiva
-2. en cada frame la gravedad reduce esa velocidad
-3. la posicion `y` se actualiza con esa velocidad
-4. el angulo visual del pajaro depende de la velocidad vertical
+- gravedad
+- impulso al saltar
+- velocidad maxima de caida
 
-### 3. Colisiones
+La posicion vertical del pajaro cambia segun su velocidad, y su inclinacion visual depende de ese movimiento.
 
-Las colisiones se calculan con cajas simples:
+### Colisiones
+
+Las colisiones se calculan con figuras simples:
 
 - el pajaro usa una caja de colision
-- las tuberias usan rectangulos para cuerpo y tapas
-- si las cajas se solapan, hay choque
+- las tuberias usan el cuerpo y las tapas visibles
 
-### 4. Dificultad
+Esto hace que el choque coincida mejor con lo que se ve en pantalla.
 
-La dificultad toma el mayor puntaje entre los jugadores y con eso:
+### Dificultad
 
-- sube la velocidad de las tuberias
-- baja el tiempo entre tuberias
-- calcula un nivel numerico
+La dificultad usa el mejor puntaje entre los jugadores para:
 
-### 5. Render del pajaro
+- aumentar la velocidad
+- reducir el intervalo entre tuberias
+- calcular el nivel actual
 
-El pajaro no es una sola figura.
-Se compone con varias primitivas:
+### Render del pajaro
+
+El pajaro se construye con primitivas geometricas:
 
 - circulos para cuerpo y ojo
 - triangulos para ala, pico y cola
 
-Todas las piezas se calculan alrededor del centro para que al inclinarse se muevan juntas.
+Todas las piezas se dibujan respecto al centro del pajaro, de forma que la animacion y la rotacion se mantengan coherentes.
 
-## Cambios principales respecto a la version base
+## Cambios respecto a la version base
 
-- Se separo una clase grande en varias clases por responsabilidad
-- Se agrego modo de 2 jugadores
-- Se mejoro la interfaz visual
-- Se agrego selector de jugadores
-- Se agrego pantalla de game over
-- Se agrego musica y efectos
-- Se mejoro la deteccion de colisiones contra las tuberias
-- Se dejaron constantes centralizadas para facilitar cambios rapidos
+- se separo la logica en clases por responsabilidad
+- se reemplazo el pajaro rectangular por uno compuesto
+- se agrego modo de dos jugadores
+- se agrego dificultad progresiva
+- se mejoro la interfaz visual
+- se agregaron sonidos por estado y accion
+- se agregaron pantallas de inicio y game over
+- se mejoro la deteccion de colisiones
 
-## Nota para la defensa
+## Nota para la defensa oral
 
-Si te preguntan por que esta implementacion es buena para un parcial, puedes responder:
+Este proyecto fue organizado para que sea facil de defender:
 
-- porque separa logica, render, entidades y utilidades
-- porque evita soluciones demasiado avanzadas o dificiles de justificar
-- porque toda la parte visual se construye con primitivas OpenGL faciles de mostrar
-- porque los valores importantes estan en `Constants`
-- porque el codigo ya tiene comentarios en las partes clave
+- los valores ajustables estan en `Constants`
+- la logica del juego esta centralizada en `Game`
+- cada entidad y sistema tiene una responsabilidad clara
+- el render se basa en primitivas geometricas faciles de explicar
+- los comentarios del codigo son simples y directos
 
 ## Verificacion
 
-Compilacion validada con:
+Comando de compilacion esperado:
 
 ```bash
 mvn clean compile
+```
+
+Comando de ejecucion esperado:
+
+```bash
+mvn exec:exec "-DmainClass=com.graphics.AppFlappyBird"
 ```

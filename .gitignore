@@ -2,4 +2,6 @@ target/
 .DS_Store
 desktop.ini
 .idea/
+.vscode/
+~/
 *.class
