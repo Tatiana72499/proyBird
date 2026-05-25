@@ -6,9 +6,6 @@
 
 ## Resumen
 
-Este proyecto corresponde a la entrega del primer parcial de Programacion Grafica.  
-Se desarrolló sobre una base inicial tipo Flappy Bird en Java con LWJGL y OpenGL 3.3 Core Profile, reorganizando el codigo en varias clases y agregando mejoras de jugabilidad, interfaz y sonido.
-
 El objetivo principal de esta version es que el proyecto:
 
 - compile y ejecute de forma estable
