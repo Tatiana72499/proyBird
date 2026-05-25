@@ -49,6 +49,15 @@ public class HudRenderer {
     private void renderPlayingHud(ShapeRenderer renderer, List<Bird> birds, float speed) {
         Bird playerOne = birds.get(0);
         Bird playerTwo = birds.get(1);
+        Bird playerThree = birds.get(2);
+
+        if (playerThree.isEnabled()) {
+            renderPlayerCounter(renderer, -0.60f, 0.885f, playerOne);
+            renderPlayerCounter(renderer, -0.18f, 0.885f, playerTwo);
+            renderPlayerCounter(renderer, 0.24f, 0.885f, playerThree);
+            renderSpeedCounter(renderer, 0.72f, 0.885f, speed);
+            return;
+        }
 
         renderPlayerCounter(renderer, -0.45f, 0.885f, playerOne);
         if (playerTwo.isEnabled()) {
@@ -121,10 +130,10 @@ public class HudRenderer {
         });
     }
 
-    // Modal simple para elegir entre 1 o 2 jugadores.
+    // Modal simple para elegir entre 1, 2 o 3 jugadores.
     private void renderPlayerSelectModal(ShapeRenderer renderer, float animationTime) {
         float pulse = 0.01f + (float) Math.sin(animationTime * 2.8f) * 0.006f;
-        renderer.drawRect(0.0f, -0.02f, 0.78f, 0.42f, new Color(0.08f, 0.15f, 0.24f, 0.92f));
+        renderer.drawRect(0.0f, -0.02f, 1.02f, 0.42f, new Color(0.08f, 0.15f, 0.24f, 0.92f));
         drawPixelWord(renderer, "PLAYERS", -0.28f, 0.135f, 0.014f, new Color[] {
                 new Color(0.97f, 0.99f, 0.86f),
                 new Color(0.97f, 0.99f, 0.86f),
@@ -135,8 +144,9 @@ public class HudRenderer {
                 new Color(0.97f, 0.99f, 0.86f)
         });
 
-        drawSelectButton(renderer, -0.18f, -0.08f, 1, new Color(0.98f, 0.82f, 0.22f), pulse);
-        drawSelectButton(renderer, 0.18f, -0.08f, 2, new Color(0.30f, 0.88f, 0.98f), pulse);
+        drawSelectButton(renderer, -0.26f, -0.08f, 1, new Color(0.98f, 0.82f, 0.22f), pulse);
+        drawSelectButton(renderer, 0.0f, -0.08f, 2, new Color(0.30f, 0.88f, 0.98f), pulse);
+        drawSelectButton(renderer, 0.26f, -0.08f, 3, new Color(0.98f, 0.45f, 0.72f), pulse);
     }
 
     private void drawSelectButton(ShapeRenderer renderer, float x, float y, int number, Color color, float pulse) {
@@ -239,11 +249,7 @@ public class HudRenderer {
     }
 
     private void drawCloud(ShapeRenderer renderer, float x, float y, float scale) {
-        Color cloud = new Color(1.0f, 1.0f, 1.0f, 0.92f);
-        renderer.drawCircle(x - 0.05f * scale, y, 0.05f * scale, cloud, 18);
-        renderer.drawCircle(x, y + 0.02f * scale, 0.06f * scale, cloud, 18);
-        renderer.drawCircle(x + 0.05f * scale, y, 0.05f * scale, cloud, 18);
-        renderer.drawRect(x, y - 0.02f * scale, 0.14f * scale, 0.04f * scale, cloud);
+        
     }
 
     private void renderStartSkyline(ShapeRenderer renderer) {

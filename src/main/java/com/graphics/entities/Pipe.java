@@ -13,6 +13,7 @@ public class Pipe {
     private final float gapHeight;
     private boolean scoredPlayer1;
     private boolean scoredPlayer2;
+    private boolean scoredPlayer3;
 
     public Pipe(float x, float gapY, float width, float gapHeight) {
         this.x = x;
@@ -102,6 +103,10 @@ public class Pipe {
         }
         if (playerIndex == 1 && !scoredPlayer2) {
             scoredPlayer2 = true;
+            return true;
+        }
+        if (playerIndex == 2 && !scoredPlayer3) {
+            scoredPlayer3 = true;
             return true;
         }
         return false;

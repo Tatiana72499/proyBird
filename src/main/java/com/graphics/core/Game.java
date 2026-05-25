@@ -36,7 +36,7 @@ public class Game {
     private final List<Bird> birds = new ArrayList<>();
     private final List<Pipe> pipes = new ArrayList<>();
     private GameState state = GameState.START;
-    private int selectedPlayerCount = 2;
+    private int selectedPlayerCount = 3;
     private int bestScore;
 
     public void run() {
@@ -68,13 +68,22 @@ public class Game {
                 Constants.PLAYER_ONE_X,
                 Constants.PLAYER_ONE_START_Y,
                 new Color(0.98f, 0.82f, 0.20f),
-                GLFW.GLFW_KEY_SPACE));
+                GLFW.GLFW_KEY_SPACE,
+                true));
         birds.add(new Bird(
                 "J2",
                 Constants.PLAYER_TWO_X,
                 Constants.PLAYER_TWO_START_Y,
                 new Color(0.30f, 0.88f, 0.98f),
-                GLFW.GLFW_KEY_W));
+                GLFW.GLFW_KEY_W,
+                true));
+        birds.add(new Bird(
+                "J3",
+                Constants.PLAYER_THREE_X,
+                Constants.PLAYER_THREE_START_Y,
+                new Color(0.98f, 0.45f, 0.72f),
+                GLFW.GLFW_KEY_R,
+                true));
     }
 
     // Reinicia la partida dejando la escena lista para volver a jugar.
@@ -85,14 +94,15 @@ public class Game {
         for (Bird bird : birds) {
             bird.reset();
         }
-        configurePlayers(2);
+        configurePlayers(3);
         changeState(GameState.START);
     }
 
     private void configurePlayers(int playerCount) {
         selectedPlayerCount = playerCount;
         birds.get(0).setEnabled(true);
-        birds.get(1).setEnabled(playerCount == 2);
+        birds.get(1).setEnabled(playerCount >= 2);
+        birds.get(2).setEnabled(playerCount >= 3);
     }
 
     private void loop() {
@@ -135,7 +145,8 @@ public class Game {
         if (state == GameState.START) {
             boolean player1Jump = playerPressedJump(birds.get(0));
             boolean player2Jump = playerPressedJump(birds.get(1));
-            if (player1Jump || player2Jump || clickedStartButton()) {
+            boolean player3Jump = playerPressedJump(birds.get(2));
+            if (player1Jump || player2Jump || player3Jump || clickedStartButton()) {
                 changeState(GameState.PLAYER_SELECT);
             }
             return;
@@ -146,6 +157,8 @@ public class Game {
                 startGameWithPlayers(1);
             } else if (inputManager.isKeyPressed(GLFW.GLFW_KEY_2) || clickedPlayerButton(2)) {
                 startGameWithPlayers(2);
+            } else if (inputManager.isKeyPressed(GLFW.GLFW_KEY_3) || clickedPlayerButton(3)) {
+                startGameWithPlayers(3);
             } else if (inputManager.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
                 changeState(GameState.START);
             }
@@ -179,10 +192,11 @@ public class Game {
         configurePlayers(playerCount);
         changeState(GameState.PLAYING);
         // El impulso inicial hace que la partida arranque de inmediato.
-        birds.get(0).jump();
-        musicPlayer.playJump();
-        if (playerCount == 2) {
-            birds.get(1).jump();
+        for (Bird bird : birds) {
+            if (!bird.isEnabled()) {
+                continue;
+            }
+            bird.jump();
             musicPlayer.playJump();
         }
     }
@@ -207,7 +221,7 @@ public class Game {
             return false;
         }
         Vec2 mouse = inputManager.getMouseNdc();
-        float x = playerCount == 1 ? -0.18f : 0.18f;
+        float x = playerCount == 1 ? -0.26f : playerCount == 2 ? 0.0f : 0.26f;
         return isInside(mouse, x, -0.08f, 0.22f, 0.14f);
     }
 
@@ -248,7 +262,7 @@ public class Game {
             bird.update(deltaTime);
         }
 
-        difficultySystem.update(birds.get(0).getScore(), birds.get(1).getScore());
+        difficultySystem.update(getMaxEnabledScore(), getSecondEnabledScore());
         pipeSpawner.update(deltaTime, difficultySystem.getSpawnInterval(), pipes);
 
         for (Pipe pipe : pipes) {
@@ -315,13 +329,45 @@ public class Game {
         if (state == GameState.START) {
             title += " | ENTER o salto para iniciar";
         } else if (state == GameState.PLAYER_SELECT) {
-            title += " | Elige 1 o 2 jugadores";
+            title += " | Elige 1, 2 o 3 jugadores";
         } else if (state == GameState.GAME_OVER) {
             title += " | GAME OVER - ENTER para reiniciar";
         } else {
-            title += selectedPlayerCount == 1 ? " | SPACE salta" : " | SPACE y W/UP saltan";
+            title += switch (selectedPlayerCount) {
+                case 1 -> " | SPACE salta";
+                case 2 -> " | SPACE y W/UP saltan";
+                default -> " | SPACE, W/UP y R saltan";
+            };
         }
         window.setTitle(title);
+    }
+
+    private int getMaxEnabledScore() {
+        int maxScore = 0;
+        for (Bird bird : birds) {
+            if (bird.isEnabled()) {
+                maxScore = Math.max(maxScore, bird.getScore());
+            }
+        }
+        return maxScore;
+    }
+
+    private int getSecondEnabledScore() {
+        int highest = 0;
+        int second = 0;
+        for (Bird bird : birds) {
+            if (!bird.isEnabled()) {
+                continue;
+            }
+            int score = bird.getScore();
+            if (score >= highest) {
+                second = highest;
+                highest = score;
+            } else if (score > second) {
+                second = score;
+            }
+        }
+        return second;
     }
 
     private int countAliveBirds() {

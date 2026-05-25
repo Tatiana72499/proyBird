@@ -1,7 +1,7 @@
 package com.graphics.utils;
 
-// Valores globales configurables del proyecto.
-// Tenerlos juntos facilita ajustar el juego en vivo durante el examen.
+// Valores globales del proyecto
+
 public final class Constants {
 
     private Constants() {
@@ -16,20 +16,25 @@ public final class Constants {
     public static final float GROUND_Y = -0.82f;
 
     public static final float GRAVITY = -1.9f;
-    public static final float JUMP_FORCE = 0.85f;
+    public static final float JUMP_FORCE = 0.65f;
     public static final float MAX_FALL_SPEED = -1.8f;
     public static final float DEAD_FALL_SPEED = -1.1f;
 
     public static final float PLAYER_ONE_X = -0.45f;
     public static final float PLAYER_TWO_X = -0.20f;
+    public static final float PLAYER_THREE_X = 0.05f;
     public static final float PLAYER_ONE_START_Y = 0.08f;
     public static final float PLAYER_TWO_START_Y = -0.08f;
+    public static final float PLAYER_THREE_START_Y = 0.00f;
 
     public static final float BIRD_BODY_RADIUS = 0.050f;
     public static final float BIRD_BELLY_RADIUS = 0.030f;
     public static final float BIRD_COLLISION_WIDTH = 0.105f;
     public static final float BIRD_COLLISION_HEIGHT = 0.100f;
     public static final float MAX_BIRD_ROTATION_RADIANS = 0.55f;
+    public static final float MAX_RISE_SPEED = 1.15f;
+
+    public static final int REVERSE_GRAVITY_SCORE = 1;   
 
     public static final float PIPE_WIDTH = 0.18f;
     public static final float PIPE_GAP_HEIGHT = 0.46f;

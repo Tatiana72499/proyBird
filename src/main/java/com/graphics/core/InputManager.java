@@ -48,7 +48,9 @@ public class InputManager {
         saveKey(GLFW.GLFW_KEY_SPACE);
         saveKey(GLFW.GLFW_KEY_1);
         saveKey(GLFW.GLFW_KEY_2);
+        saveKey(GLFW.GLFW_KEY_3);
         saveKey(GLFW.GLFW_KEY_W);
+        saveKey(GLFW.GLFW_KEY_R);
         saveKey(GLFW.GLFW_KEY_UP);
         previousStates.put(GLFW.GLFW_MOUSE_BUTTON_LEFT, isLeftMouseDown());
     }

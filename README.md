@@ -222,27 +222,6 @@ El pajaro se construye con primitivas geometricas:
 
 Todas las piezas se dibujan respecto al centro del pajaro, de forma que la animacion y la rotacion se mantengan coherentes.
 
-## Cambios respecto a la version base
-
-- se separo la logica en clases por responsabilidad
-- se reemplazo el pajaro rectangular por uno compuesto
-- se agrego modo de dos jugadores
-- se agrego dificultad progresiva
-- se mejoro la interfaz visual
-- se agregaron sonidos por estado y accion
-- se agregaron pantallas de inicio y game over
-- se mejoro la deteccion de colisiones
-
-## Nota para la defensa oral
-
-Este proyecto fue organizado para que sea facil de defender:
-
-- los valores ajustables estan en `Constants`
-- la logica del juego esta centralizada en `Game`
-- cada entidad y sistema tiene una responsabilidad clara
-- el render se basa en primitivas geometricas faciles de explicar
-- los comentarios del codigo son simples y directos
-
 ## Verificacion
 
 Comando de compilacion esperado:

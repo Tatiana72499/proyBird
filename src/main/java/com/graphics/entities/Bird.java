@@ -12,6 +12,7 @@ public class Bird {
     private final float startY;
     private final Color baseColor;
     private final int jumpKey;
+    private final boolean reverseGravityAtEighty;
 
     private float y;
     private float velocityY;
@@ -20,12 +21,13 @@ public class Bird {
     private int score;
     private float wingTime;
 
-    public Bird(String name, float x, float startY, Color baseColor, int jumpKey) {
+    public Bird(String name, float x, float startY, Color baseColor, int jumpKey, boolean reverseGravityAtEighty) {
         this.name = name;
         this.x = x;
         this.startY = startY;
         this.baseColor = baseColor;
         this.jumpKey = jumpKey;
+        this.reverseGravityAtEighty = reverseGravityAtEighty;
         reset();
     }
 
@@ -47,9 +49,16 @@ public class Bird {
             return;
         }
 
-        velocityY += Constants.GRAVITY * deltaTime;
-        if (velocityY < Constants.MAX_FALL_SPEED) {
-            velocityY = Constants.MAX_FALL_SPEED;
+        if (hasReverseGravity()) {
+            velocityY -= Constants.GRAVITY * deltaTime;
+            if (velocityY > Constants.MAX_RISE_SPEED) {
+                velocityY = Constants.MAX_RISE_SPEED;
+            }
+        } else {
+            velocityY += Constants.GRAVITY * deltaTime;
+            if (velocityY < Constants.MAX_FALL_SPEED) {
+                velocityY = Constants.MAX_FALL_SPEED;
+            }
         }
         y += velocityY * deltaTime;
     }
@@ -178,6 +187,10 @@ public class Bird {
         float normalized = velocityY / Constants.JUMP_FORCE;
         normalized = Math.max(-1.0f, Math.min(1.0f, normalized));
         return normalized * Constants.MAX_BIRD_ROTATION_RADIANS;
+    }
+
+    public boolean hasReverseGravity() {
+        return reverseGravityAtEighty && score >= Constants.REVERSE_GRAVITY_SCORE;
     }
 
     public void addScore() {
